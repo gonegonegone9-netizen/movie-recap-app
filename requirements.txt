@@ -1,0 +1,5 @@
+streamlit
+assemblyai
+google-generativeai
+azure-cognitiveservices-speech
+moviepy
