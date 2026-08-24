@@ -6,9 +6,7 @@ import json
 import assemblyai as aai
 import google.generativeai as genai
 import edge_tts
-from moviepy.video.io.VideoFileClip import VideoFileClip
-from moviepy.audio.io.AudioFileClip import AudioFileClip
-from moviepy.audio.CompositeAudioClip import CompositeAudioClip
+from moviepy import VideoFileClip, AudioFileClip, CompositeAudioClip
 
 st.set_page_config(page_title="Movie Dubbing App", page_icon="🎬")
 
