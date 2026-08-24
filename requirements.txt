@@ -1,5 +1,5 @@
 streamlit
 assemblyai
 google-generativeai
-azure-cognitiveservices-speech
+edge-tts
 moviepy
