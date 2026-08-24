@@ -1,33 +1,57 @@
 import streamlit as st
+import os
 
 st.set_page_config(page_title="Movie Dubbing App", page_icon="🎬")
 
 st.title("One-Click Movie Dubbing App 🎬")
-st.write("Video ကို အလိုအလျောက် မြန်မာလို ဘာသာပြန်ပြီး အသံထည့်ပေးမည့် App ဖြစ်ပါသည်။")
+st.write("Video ကို အလိုအလျောက် မြန်မာလို ဘာသာပြန်ပြီး (Edge TTS - Nilar/Thiha) ဖြင့် အသံထည့်ပေးမည့် App ဖြစ်ပါသည်။")
 
-# API Keys တောင်းခံခြင်း
-with st.expander("API Keys များ ထည့်ရန် (ဒီကိုနှိပ်ပါ)"):
+# API Keys တောင်းခံခြင်း (Azure မလိုတော့ပါ)
+with st.expander("🔑 API Keys များ ထည့်ရန် (ဒီကိုနှိပ်ပါ)"):
+    st.write("မှတ်ချက်: Edge TTS သည် အခမဲ့ဖြစ်၍ Key မလိုပါ။")
     aai_key = st.text_input("AssemblyAI API Key:", type="password")
     gemini_key = st.text_input("Gemini API Key:", type="password")
-    azure_key = st.text_input("Azure TTS Key:", type="password")
 
-# Video Upload
-uploaded_video = st.file_uploader("Video တင်ရန် (MP4)", type=["mp4"])
-voice_choice = st.selectbox("အသံရွေးချယ်ရန်", ["my-MM-NilarNeural (Female - နီလာ)", "my-MM-ThihaNeural (Male - သီဟ)"])
+# Video Upload 
+st.subheader("၁။ Video ရွေးချယ်ပါ")
+uploaded_video = st.file_uploader("Video တင်ရန် (MP4 format သာ)", type=["mp4"])
 
-if st.button("Start Dubbing"):
-    if uploaded_video and aai_key and gemini_key and azure_key:
-        st.info("၁။ AssemblyAI ဖြင့် စာသားနှင့် အချိန် ထုတ်ယူနေပါသည်...")
-        # API ချိတ်ဆက်ရန် နေရာ
+# အသံ ရွေးချယ်ခြင်း (Edge TTS)
+st.subheader("၂။ မြန်မာအသံ ရွေးချယ်ပါ")
+voice_choice = st.selectbox(
+    "အသံရွေးချယ်ရန်", 
+    ["my-MM-NilarNeural (Female - နီလာ)", "my-MM-ThihaNeural (Male - သီဟ)"]
+)
+
+if st.button("🚀 Start Dubbing"):
+    if uploaded_video and aai_key and gemini_key:
         
-        st.info("၂။ Gemini AI ဖြင့် မြန်မာလို ဘာသာပြန်နေပါသည်...")
-        # API ချိတ်ဆက်ရန် နေရာ
+        # UI တွင် အလုပ်လုပ်နေကြောင်း ပြသရန်
+        progress_text = "လုပ်ငန်းစဉ် စတင်နေပါပြီ..."
+        my_bar = st.progress(0, text=progress_text)
         
-        st.info("၃။ Microsoft Azure ဖြင့် အသံထွက် (TTS) ဖန်တီးနေပါသည်...")
-        # API ချိတ်ဆက်ရန် နေရာ
-        
-        st.info("၄။ FFmpeg ဖြင့် Video နှင့် Audio ပေါင်းနေပါသည်...")
-        
-        st.success("လုပ်ငန်းစဉ်ပြီးဆုံးပါသည်။ (မှတ်ချက် - ယခုအဆင့်သည် UI စမ်းသပ်ခြင်းသာဖြစ်ပြီး API အစစ်ချိတ်ဆက်ရန် ကျန်ပါသေးသည်)")
+        try:
+            st.info("⏳ ၁။ AssemblyAI ဖြင့် ဗီဒီယိုထဲမှ စာသားနှင့် အချိန်ကို ထုတ်ယူနေပါသည်...")
+            my_bar.progress(25, text="AssemblyAI အလုပ်လုပ်နေသည်...")
+            # (AssemblyAI ဖြင့် Audio ကို SRT အဖြစ်ပြောင်းမည့် Code နေရာ)
+            
+            st.info("⏳ ၂။ Gemini AI ဖြင့် အချိန်ကန့်သတ်ချက် (Max Limit) အတိုင်း မြန်မာလို ဘာသာပြန်နေပါသည်...")
+            my_bar.progress(50, text="Gemini AI ဘာသာပြန်နေသည်...")
+            # (Gemini API သို့ Prompt ပို့၍ JSON ပြန်ယူမည့် Code နေရာ)
+            
+            st.info("⏳ ၃။ Edge TTS ဖြင့် မြန်မာအသံ (Nilar/Thiha) ဖန်တီးနေပါသည်...")
+            my_bar.progress(75, text="Edge TTS အသံထုတ်နေသည်...")
+            # (Edge TTS ဖြင့် အသံဖိုင်လေးများထုတ်မည့် နေရာ)
+            
+            st.info("⏳ ၄။ FFmpeg ဖြင့် မူရင်းဗီဒီယိုနှင့် မြန်မာအသံသစ်ကို ပေါင်းစပ်နေပါသည်...")
+            my_bar.progress(90, text="Video နှင့် Audio ပေါင်းနေသည်...")
+            # (MoviePy / FFmpeg ဖြင့် ဗီဒီယိုပေါင်းမည့် နေရာ)
+            
+            my_bar.progress(100, text="အောင်မြင်စွာ ပြီးဆုံးပါပြီ!")
+            st.success("🎉 အောင်မြင်ပါသည်။ သင့်၏ မြန်မာ Dubbing Video အသစ် ရရှိပါပြီ။ (ယခုသည် စမ်းသပ်မှု UI သာဖြစ်ပါသည်)")
+            
+        except Exception as e:
+            st.error(f"အမှားအယွင်းဖြစ်ပေါ်နေပါသည်: {e}")
+            
     else:
-        st.warning("ကျေးဇူးပြု၍ API Keys အားလုံးနှင့် Video ကို ထည့်ပေးပါ။")
+        st.warning("⚠️ ကျေးဇူးပြု၍ AssemblyAI Key, Gemini Key နှင့် Video ကို ပြည့်စုံစွာ ထည့်ပေးပါ။")
