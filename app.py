@@ -6,7 +6,9 @@ import json
 import assemblyai as aai
 import google.generativeai as genai
 import edge_tts
-from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy.audio.io.AudioFileClip import AudioFileClip
+from moviepy.audio.CompositeAudioClip import CompositeAudioClip
 
 st.set_page_config(page_title="Movie Dubbing App", page_icon="🎬")
 
@@ -123,20 +125,20 @@ Inputs:
                 asyncio.run(generate_tts(trans_text, voice_choice, audio_filename))
                 
                 start_sec = seg["start"] / 1000.0
-                audio_clip = AudioFileClip(audio_filename).set_start(start_sec)
+                audio_clip = AudioFileClip(audio_filename).with_start(start_sec)
                 audio_clips.append(audio_clip)
 
             # ၄။ ဗီဒီယိုနှင့် အသံ ပေါင်းစပ်ခြင်း
             st.info("⏳ ၄။ ဗီဒီယိုနှင့် အသံများကို ပေါင်းစပ်နေပါသည်...")
             video = VideoFileClip(video_path)
-            original_audio = video.audio.volumemax(0.05) if video.audio else None
+            original_audio = video.audio.with_volume_scaled(0.05) if video.audio else None
 
             if original_audio:
                 final_audio = CompositeAudioClip([original_audio] + audio_clips)
             else:
                 final_audio = CompositeAudioClip(audio_clips)
 
-            final_video = video.set_audio(final_audio)
+            final_video = video.with_audio(final_audio)
             output_video_path = tempfile.NamedTemporaryFile(delete=False, suffix='.mp4').name
             final_video.write_videofile(output_video_path, codec="libx264", audio_codec="aac", fps=24)
 
