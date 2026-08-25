@@ -9,7 +9,8 @@ def check_password():
     """Returns True if the user entered the correct password."""
     
     def password_entered():
-        if st.session_state["password"] == st.secrets["password"]:
+                if st.session_state["password"] == "7818":
+
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Password ကို memory ထဲမှာ ဆက်မထားတော့ပါ
         else:
