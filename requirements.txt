@@ -1,6 +1,7 @@
-streamlit
+streamlit>=1.37.0
 assemblyai
 google-generativeai
 edge-tts
+opencv-python
+numpy
 moviepy
-requests
